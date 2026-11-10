@@ -115,10 +115,11 @@ addEventListener("DOMContentLoaded", () => {
     
  
   function loop(){
+      RPM = RPM - RPMshift
     maxRPM = 100 + (Math.random() * (5/((gear*2)+1))) + Math.sin(Date.now() / 153) - Math.min( Math.tan(Date.now() / 245), 4); 
     if (keys['KeyW']){
       RPM < maxRPM 
-        ? RPM = RPM + (2/(Math.pow(gear,2.5) + 0.1)) - RPMshift
+        ? RPM = RPM + (2/(Math.pow(gear,2.5) + 0.1))
         : RPM = maxRPM; 
     } else {
       RPM > 0 
