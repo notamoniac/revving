@@ -73,34 +73,82 @@ addEventListener("DOMContentLoaded", () => {
     }
     }
 
-    let RPMshift = 0;
-    window.addEventListener('keydown', (e) => {
-        if (e.code === 'KeyV') {
-            if (gear == 6) {
-                RPMshift = 0;
-            }
-            else {
-                RPMshift = 7-gear;
-            }
-        } else if (e.code === 'KeyC') {
-            if(gear == 0){
-                RPMshift = 0;
-            }else{
-                RPMshift = gear - 7;
-            }
-        }
-    });
-    window.addEventListener('keyup', (e) => {
-        if (e.code === 'KeyV') {
-            RPMshift = 0;
-        }
-        if (e.code === 'KeyC') {
-            RPMshift = 0;
-        }
-    });
-    if (RPMshift < 0){
+    let RPMshift = 0; ////////////////// RPM SHIFT
+
+function triggerShiftUp() {
+    if(RPM-(7-gear)<0){
         RPMshift = 0;
     }
+    else if (gear == 6) {
+        RPMshift = 0;
+    } else {
+        RPMshift = 7 - gear;
+    }
+}
+
+function triggerShiftDown() {
+    if (gear == 0) {
+        RPMshift = 0;
+    } else {
+        if(RPM == 0){
+            RPMshift = 0;
+        }else{
+        RPMshift = gear - 7;
+    }
+    }
+}
+
+function resetShift() {
+    RPMshift = 0;
+}
+
+// ==========================================
+// KEYs
+window.addEventListener('keydown', (e) => {
+    if (e.code === 'KeyV') {
+        triggerShiftUp();
+    } else if (e.code === 'KeyC') {
+        triggerShiftDown();
+    }
+});
+
+window.addEventListener('keyup', (e) => {
+    if (e.code === 'KeyV' || e.code === 'KeyC') {
+        resetShift();
+    }
+});
+
+
+// ==========================================
+// MOUSE & TOUCH BUTTON
+
+if (shiftUpButton) {
+    shiftUpButton.addEventListener('mousedown', triggerShiftUp);
+    shiftUpButton.addEventListener('mouseup', resetShift);
+    shiftUpButton.addEventListener('mouseleave', resetShift);
+
+    shiftUpButton.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        triggerShiftUp();
+    });
+    shiftUpButton.addEventListener('touchend', resetShift);
+}
+
+
+// SHIFT DOWN BUTTON
+
+
+if (shiftDownButton) {
+    shiftDownButton.addEventListener('mousedown', triggerShiftDown);
+    shiftDownButton.addEventListener('mouseup', resetShift);
+    shiftDownButton.addEventListener('mouseleave', resetShift);
+
+    shiftDownButton.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        triggerShiftDown();
+    });
+    shiftDownButton.addEventListener('touchend', resetShift);
+}
 
     //shifting with buttons and keys
     shiftUpButton.addEventListener('click', shiftUp);
@@ -115,11 +163,11 @@ addEventListener("DOMContentLoaded", () => {
     
  
   function loop(){
-      RPM = RPM - RPMshift
+    RPM = RPM - RPMshift;
     maxRPM = 100 + (Math.random() * (5/((gear*2)+1))) + Math.sin(Date.now() / 153) - Math.min( Math.tan(Date.now() / 245), 4); 
     if (keys['KeyW']){
       RPM < maxRPM 
-        ? RPM = RPM + (2/(Math.pow(gear,2.5) + 0.1))
+        ? RPM = RPM + (2/(Math.pow(gear,2.5) + 0.1)) 
         : RPM = maxRPM; 
     } else {
       RPM > 0 
